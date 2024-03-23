@@ -1,0 +1,5 @@
+@startuml
+class SeedShipment {
+    + {static} CreateDummyShipment() : Shipment
+}
+@enduml

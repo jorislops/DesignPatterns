@@ -1,0 +1,35 @@
+@startuml
+class LinkedListClient {
+    + {static} Main() : void
+}
+class LinkedList {
+    - _head : Node?
+    - _last : Node?
+    + Add(value:int) : void
+    + Min() : int?
+    + GetEnumerable() : IEnumerable<int>
+    + GetEnumerator() : IEnumerator<int>
+    - GetEnumerator() : IEnumerator
+}
+class "IEnumerable`1"<T> {
+}
+class Node {
+    + Value : int <<get>> <<set>>
+}
+class LinkedListIterator {
+    + LinkedListIterator(linkedList:LinkedList)
+    + MoveNext() : bool
+    + Reset() : void
+    + Current : int <<get>>
+    - Current : object <<get>>
+    + Dispose() : void
+}
+class "IEnumerator`1"<T> {
+}
+"IEnumerable`1" "<int>" <|-- LinkedList
+LinkedList +-- Node
+Node --> "Next" Node
+LinkedList +-- LinkedListIterator
+"IEnumerator`1" "<int>" <|-- LinkedListIterator
+LinkedListIterator --> "_linkedList" LinkedList
+@enduml

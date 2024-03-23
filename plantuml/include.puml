@@ -1,0 +1,10 @@
+@startuml
+!include ./DesignPatterns/LinkedList.puml
+!include ./DesignPatterns/CommandPattern.puml
+!include ./DesignPatterns/Program.puml
+!include ./DesignPatterns/Composite/SeedShipment.puml
+!include ./DesignPatterns/Composite/Shipment.puml
+!include ./DesignPatterns/obj/Debug/net8.0/.NETCoreApp,Version=v8.0.AssemblyAttributes.puml
+!include ./DesignPatterns/obj/Debug/net8.0/DesignPatterns.GlobalUsings.g.puml
+!include ./DesignPatterns/obj/Debug/net8.0/DesignPatterns.AssemblyInfo.puml
+@enduml

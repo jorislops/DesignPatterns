@@ -1,0 +1,30 @@
+@startuml
+class Stock {
+    - _name : string = "ABC"
+    - _quantity : int = 10
+    + Buy() : void
+    + Sell() : void
+}
+interface Order {
+    Execute() : void
+}
+class BuyStock {
+    + BuyStock(abcStock:Stock)
+    + Execute() : void
+}
+class SellStock {
+    + SellStock(abcStock:Stock)
+    + Execute() : void
+}
+class Broker {
+    + TakeOrder(order:Order) : void
+    + PlaceOrders() : void
+}
+class "List`1"<T> {
+}
+Order <|-- BuyStock
+BuyStock --> "_abcStock" Stock
+Order <|-- SellStock
+SellStock --> "_abcStock" Stock
+Broker o-> "_orderList<Order>" "List`1"
+@enduml
