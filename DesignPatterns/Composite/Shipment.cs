@@ -111,6 +111,7 @@ public class Box : ShipmentItemGroup
     {
         visitor.Visit(this);
         base.Accept(visitor);
+        
     }
 }
 
