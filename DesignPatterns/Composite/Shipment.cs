@@ -10,7 +10,7 @@ public abstract class ShipmentItem
     //
     // public abstract void DisplayProducts();
 
-    public abstract void Accept(ShipmentVisitor vistor);
+    public abstract void Accept(ShipmentVisitor visitor);
 }
 
 public abstract class ShipmentItemGroup : ShipmentItem
@@ -50,14 +50,9 @@ public abstract class ShipmentItemGroup : ShipmentItem
     //     }
     // }
     
-    public override void Accept(ShipmentVisitor vistor)
+    public override void Accept(ShipmentVisitor visitor)
     {
-        vistor.VisitPre(this);
-        foreach (var item in Items)
-        {
-            item.Accept(vistor);
-        }
-        vistor.VisitPost(this);
+        visitor.Visit(this);
     }
 }
 
@@ -73,16 +68,10 @@ public class Shipment : ShipmentItemGroup
     //     Console.WriteLine("Shipment Contains: ");
     //     base.DisplayProducts();
     // }
-    public override void Accept(ShipmentVisitor vistor)
+    public override void Accept(ShipmentVisitor visitor)
     {
-        //it's in order of the hierarchy
-        vistor.Visit(this);
-        base.Accept(vistor);
-        
-        //maybe you want to do something after the visit
-        
-        // Pre and Post visit? And maybe depth first or breadth first?
-        // but then the amount of methods will explode :-(
+        visitor.Visit(this);
+        base.Accept(visitor);
     }
 }
 
@@ -97,10 +86,10 @@ public class Pallet : ShipmentItemGroup
     //     Console.WriteLine("Pallet Contains: ");
     //     base.DisplayProducts();
     // }
-    public override void Accept(ShipmentVisitor vistor)
+    public override void Accept(ShipmentVisitor visitor)
     {
-        vistor.Visit(this);
-        base.Accept(vistor);
+        visitor.Visit(this);
+        base.Accept(visitor);
     }
 }
 
@@ -118,11 +107,10 @@ public class Box : ShipmentItemGroup
     //         item.DisplayProducts();
     //     }
     // }
-    public override void Accept(ShipmentVisitor vistor)
+    public override void Accept(ShipmentVisitor visitor)
     {
-        vistor.Visit(this);
-        base.Accept(vistor);
-        
+        visitor.Visit(this);
+        base.Accept(visitor);
     }
 }
 
@@ -147,9 +135,9 @@ public class ProductWithSerialNumber : Product
     // {
     //     Console.WriteLine($"Product: {Name}, Serial Number: {SerialNumber}, Price: {Price}, Quantity: {Quantity}, Weight: {Weight}");
     // }
-    public override void Accept(ShipmentVisitor vistor)
+    public override void Accept(ShipmentVisitor visitor)
     {
-        vistor.Visit(this);
+        visitor.Visit(this);
     }
 }
 
@@ -166,9 +154,9 @@ public class ProductWithoutSerialNumber : Product
     // }
 
 
-    public override void Accept(ShipmentVisitor vistor)
+    public override void Accept(ShipmentVisitor visitor)
     {
-        vistor.Visit(this);
+        visitor.Visit(this);
     }
 }
 
