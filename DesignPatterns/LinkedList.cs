@@ -15,6 +15,16 @@ public class LinkedListClient
 
         Console.WriteLine("------");
 
+        //GetEnumerator (is in IEnumerable<T> interface)
+        using (var iterator = linkedList.GetEnumerator())
+        {
+            while (iterator.MoveNext())
+            {
+                Console.WriteLine(iterator.Current);
+            }    
+        }
+        
+        
         foreach (var item in linkedList)
         {
             Console.WriteLine(item);

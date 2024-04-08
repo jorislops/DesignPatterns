@@ -1,0 +1,60 @@
+@startuml
+class InterfaceSegregationBefore {
+    + {static} Main() : void
+}
+class Order {
+    + Status : string <<get>> <<set>> = "Open"
+    + AddOrderLine(itemQuantityPrice:ItemQuantityPrice) : void
+    + TotalPrice() : decimal
+}
+abstract class PaymentProcessor {
+    + {abstract} Pay(order:Order) : void
+    + {abstract} AuthorizeBySms(order:Order, code:string) : void
+}
+class DebitPaymentProcessor {
+    - _securityCode : string
+    + DebitPaymentProcessor(securityCode:string)
+    + <<override>> Pay(order:Order) : void
+    + <<override>> AuthorizeBySms(order:Order, code:string) : void
+}
+class CreditPaymentProcessor {
+    - _securityCode : string
+    + CreditPaymentProcessor(securityCode:string)
+    + <<override>> AuthorizeBySms(order:Order, code:string) : void
+    + <<override>> Pay(order:Order) : void
+}
+class PaypalPaymentProcessor {
+    - _email : string
+    + _verified : bool = false
+    + PaypalPaymentProcessor(email:string)
+    + <<override>> Pay(order:Order) : void
+    + <<override>> AuthorizeBySms(order:Order, code:string) : void
+}
+class AfterpayPaymentProcessor {
+    - <<readonly>> _email : string
+    - <<readonly>> _age : int
+    + AfterpayPaymentProcessor(email:string, age:int)
+    + <<override>> Pay(order:Order) : void
+    + <<override>> AuthorizeBySms(order:Order, code:string) : void
+    - VerifyAge(age:int) : bool
+}
+class ItemQuantityPrice <<record>> {
+    + Product : string <<get>> <<init>>
+    + Quantity : decimal <<get>> <<init>>
+    + UnitPrice : decimal <<get>> <<init>>
+}
+class "List`1"<T> {
+}
+InterfaceSegregationBefore +-- Order
+Order o-> "_orderlines<ItemQuantityPrice>" "List`1"
+InterfaceSegregationBefore +-- PaymentProcessor
+InterfaceSegregationBefore +-- DebitPaymentProcessor
+PaymentProcessor <|-- DebitPaymentProcessor
+InterfaceSegregationBefore +-- CreditPaymentProcessor
+PaymentProcessor <|-- CreditPaymentProcessor
+InterfaceSegregationBefore +-- PaypalPaymentProcessor
+PaymentProcessor <|-- PaypalPaymentProcessor
+InterfaceSegregationBefore +-- AfterpayPaymentProcessor
+PaymentProcessor <|-- AfterpayPaymentProcessor
+Order +-- ItemQuantityPrice
+@enduml

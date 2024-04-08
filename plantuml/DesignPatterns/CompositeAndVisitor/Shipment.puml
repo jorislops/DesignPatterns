@@ -1,0 +1,50 @@
+@startuml
+abstract class ShipmentItem {
+    + {abstract} Accept(visitor:ShipmentVisitor) : void
+    + {abstract} Accept(shipmentVisitorWithoutRecursion:ShipmentVisitorWithoutRecursion) : void
+}
+abstract class ShipmentItemGroup {
+    + Add(item:ShipmentItem) : void
+    + Remove(item:ShipmentItem) : void
+    + <<override>> Accept(visitor:ShipmentVisitor) : void
+}
+class Shipment {
+    + <<override>> Accept(visitor:ShipmentVisitor) : void
+    + <<override>> Accept(shipmentVisitorWithoutRecursion:ShipmentVisitorWithoutRecursion) : void
+}
+class Pallet {
+    + <<override>> Accept(visitor:ShipmentVisitor) : void
+    + <<override>> Accept(shipmentVisitorWithoutRecursion:ShipmentVisitorWithoutRecursion) : void
+}
+class Box {
+    + <<override>> Accept(visitor:ShipmentVisitor) : void
+    + <<override>> Accept(shipmentVisitorWithoutRecursion:ShipmentVisitorWithoutRecursion) : void
+}
+abstract class Product {
+    + Name : string <<get>> <<set>>
+    + Price : double <<get>> <<set>>
+    + Weight : int <<get>> <<set>>
+}
+class ProductWithSerialNumber {
+    + SerialNumber : string <<get>> <<set>>
+    + <<override>> Accept(visitor:ShipmentVisitor) : void
+    + <<override>> Accept(shipmentVisitorWithoutRecursion:ShipmentVisitorWithoutRecursion) : void
+}
+class ProductWithoutSerialNumber {
+    + <<override>> Accept(visitor:ShipmentVisitor) : void
+    + <<override>> Accept(shipmentVisitorWithoutRecursion:ShipmentVisitorWithoutRecursion) : void
+}
+class "List`1"<T> {
+}
+class "IReadOnlyCollection`1"<T> {
+}
+ShipmentItem <|-- ShipmentItemGroup
+ShipmentItemGroup o-> "_items<ShipmentItem>" "List`1"
+ShipmentItemGroup --> "Items<ShipmentItem>" "IReadOnlyCollection`1"
+ShipmentItemGroup <|-- Shipment
+ShipmentItemGroup <|-- Pallet
+ShipmentItemGroup <|-- Box
+ShipmentItem <|-- Product
+Product <|-- ProductWithSerialNumber
+Product <|-- ProductWithoutSerialNumber
+@enduml

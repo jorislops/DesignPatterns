@@ -1,4 +1,5 @@
-namespace DesignPatterns.Composite;
+namespace DesignPatterns.CompositeAndVisitor;
+
 
 public class SeedShipment
 {
@@ -42,8 +43,7 @@ public class SeedShipment
                     product4.Weight = 40;
                     box2.Add(product4);
                 pallet2.Add(box2);
-            
-
+                
         return shipment;
     }
 

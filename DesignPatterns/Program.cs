@@ -1,7 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using DesignPatterns;
-using DesignPatterns.Composite;
+using DesignPatterns.CompositeAndVisitor;
 
 var shipment = SeedShipment.CreateDummyShipment();
 

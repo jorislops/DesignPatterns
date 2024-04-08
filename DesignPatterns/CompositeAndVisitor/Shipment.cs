@@ -1,8 +1,4 @@
-using Bogus.DataSets;
-
-namespace DesignPatterns.Composite;
-
-
+namespace DesignPatterns.CompositeAndVisitor;
 
 public abstract class ShipmentItem
 {
@@ -11,6 +7,8 @@ public abstract class ShipmentItem
     // public abstract void DisplayProducts();
 
     public abstract void Accept(ShipmentVisitor visitor);
+    
+    public abstract void Accept(ShipmentVisitorWithoutRecursion shipmentVisitorWithoutRecursion);
 }
 
 public abstract class ShipmentItemGroup : ShipmentItem
@@ -54,6 +52,8 @@ public abstract class ShipmentItemGroup : ShipmentItem
     {
         visitor.Visit(this);
     }
+
+    
 }
 
 public class Shipment : ShipmentItemGroup
@@ -73,6 +73,19 @@ public class Shipment : ShipmentItemGroup
         visitor.Visit(this);
         base.Accept(visitor);
     }
+
+    public override void Accept(ShipmentVisitorWithoutRecursion shipmentVisitorWithoutRecursion)
+    {
+        shipmentVisitorWithoutRecursion.Visit(this);
+        
+        //the traversal is done by the Composite pattern, this code can be moved to the base class
+        //we should not forget to call the base class accept method in the accept method!
+        //I leave it here to show the difference between the two visitors and make it easier to understand
+        foreach (var shipmentItem in Items)
+        {
+            shipmentItem.Accept(shipmentVisitorWithoutRecursion);
+        }
+    }
 }
 
 public class Pallet : ShipmentItemGroup
@@ -91,6 +104,23 @@ public class Pallet : ShipmentItemGroup
         visitor.Visit(this);
         base.Accept(visitor);
     }
+    
+    public override void Accept(ShipmentVisitorWithoutRecursion shipmentVisitorWithoutRecursion)
+    {
+        shipmentVisitorWithoutRecursion.PreVisit(this);
+        
+        //the traversal is done by the Composite pattern, this code can be moved to the base class
+        //we should not forget to call the base class accept method in the accept method!
+        //I leave it here to show the difference between the two visitors and make it easier to understand
+        foreach (var shipmentItem in Items)
+        {
+            shipmentItem.Accept(shipmentVisitorWithoutRecursion);
+        }
+        
+        shipmentVisitorWithoutRecursion.PostVisit(this);
+    }
+    
+    
 }
 
 public class Box : ShipmentItemGroup
@@ -111,7 +141,21 @@ public class Box : ShipmentItemGroup
     {
         visitor.Visit(this);
         base.Accept(visitor);
+    }
+    
+    public override void Accept(ShipmentVisitorWithoutRecursion shipmentVisitorWithoutRecursion)
+    {
+        shipmentVisitorWithoutRecursion.PreVisit(this);
         
+        //the traversal is done by the Composite pattern, this code can be moved to the base class
+        //we should not forget to call the base class accept method in the accept method!
+        //I leave it here to show the difference between the two visitors and make it easier to understand
+        foreach (var shipmentItem in Items)
+        {
+            shipmentItem.Accept(shipmentVisitorWithoutRecursion);
+        }
+        
+        shipmentVisitorWithoutRecursion.PostVisit(this);
     }
 }
 
@@ -140,6 +184,11 @@ public class ProductWithSerialNumber : Product
     {
         visitor.Visit(this);
     }
+    
+    public override void Accept(ShipmentVisitorWithoutRecursion shipmentVisitorWithoutRecursion)
+    {
+        shipmentVisitorWithoutRecursion.Visit(this);
+    }
 }
 
 public class ProductWithoutSerialNumber : Product
@@ -158,6 +207,11 @@ public class ProductWithoutSerialNumber : Product
     public override void Accept(ShipmentVisitor visitor)
     {
         visitor.Visit(this);
+    }
+    
+    public override void Accept(ShipmentVisitorWithoutRecursion shipmentVisitorWithoutRecursion)
+    {
+        shipmentVisitorWithoutRecursion.Visit(this);
     }
 }
 

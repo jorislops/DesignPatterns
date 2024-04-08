@@ -1,0 +1,71 @@
+@startuml
+class Strategy {
+    + {static} Main() : void
+}
+class Person {
+    + Id : int <<get>> <<set>>
+    + Name : string <<get>> <<set>>
+    + Age : int <<get>> <<set>>
+    + <<override>> ToString() : string
+    + PrintStrategy(formatter:Func<Person, string>) : string
+}
+enum OutputFormat {
+    Markdown,
+    Html,
+}
+interface IListStrategy {
+    + Start(sb:StringBuilder) : void
+    + End(sb:StringBuilder) : void
+    + AddListItem(sb:StringBuilder, item:string) : void
+}
+class HtmlStrategy {
+    + Start(sb:StringBuilder) : void
+    + End(sb:StringBuilder) : void
+    + AddListItem(sb:StringBuilder, item:string) : void
+}
+class MarkdownStrategy {
+    + AddListItem(sb:StringBuilder, item:string) : void
+}
+class TextProcessor {
+    + SetOutputFormat(format:OutputFormat) : void
+    + AppendList(items:IEnumerable<string>) : void
+    + Clear() : StringBuilder
+    + <<override>> ToString() : string
+}
+class "TextProcessorStatic`1"<LS> {
+    + AppendList(items:IEnumerable<string>) : void
+    + Clear() : StringBuilder
+    + <<override>> ToString() : string
+}
+class NameRelationalComparer <<sealed>> {
+    + Compare(x:Person, y:Person) : int
+}
+class "IComparer`1"<T> {
+}
+class AgeRelationalComparer <<sealed>> {
+    + Compare(x:Person, y:Person) : int
+}
+class "Func`2"<T1,T2> {
+}
+Strategy +-- Person
+Person o-> "NameComparer<Person>" "IComparer`1"
+Person o-> "AgeComparer<Person>" "IComparer`1"
+Person o-> "PrintAsHtml<Person,string>" "Func`2"
+Person o-> "PrintAsMarkdown<Person,string>" "Func`2"
+Strategy +-- OutputFormat
+Strategy +-- IListStrategy
+Strategy +-- HtmlStrategy
+IListStrategy <|-- HtmlStrategy
+Strategy +-- MarkdownStrategy
+IListStrategy <|-- MarkdownStrategy
+Strategy +-- TextProcessor
+TextProcessor o-> "_sb" StringBuilder
+TextProcessor --> "_listStrategy" IListStrategy
+Strategy +-- "TextProcessorStatic`1"
+"TextProcessorStatic`1" o-> "_sb" StringBuilder
+"TextProcessorStatic`1" o-> "_listStrategy" IListStrategy
+Person +-- NameRelationalComparer
+"IComparer`1" "<Person>" <|-- NameRelationalComparer
+Person +-- AgeRelationalComparer
+"IComparer`1" "<Person>" <|-- AgeRelationalComparer
+@enduml

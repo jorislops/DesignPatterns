@@ -1,4 +1,4 @@
-namespace DesignPatterns.Composite;
+namespace DesignPatterns.CompositeAndVisitor;
 
 //visitor pattern violates the open closed principle
 //because you have to change the visitor when you add a new class
@@ -14,6 +14,22 @@ namespace DesignPatterns.Composite;
 //and the concrete visitors should only implement the visit methods that they need
 //the traversal should be done in the base class, not in the concrete visitors
 //so we should not forget to call the base class accept method in the accept method!
+
+public class VisitorClient
+{
+    public static void Main()
+    {
+        var shipment = SeedShipment.CreateDummyShipment();
+
+        var countProductsVisitor = new CountProductsVisitor();
+        shipment.Accept(countProductsVisitor);
+        Console.WriteLine(countProductsVisitor.Count);
+
+        var printProductsVisitor = new DisplayProductsVisitor();
+        shipment.Accept(printProductsVisitor);
+        Console.WriteLine(printProductsVisitor.ToString());
+    }
+}
 
 public abstract class ShipmentVisitor
 {
@@ -84,6 +100,7 @@ public class DisplayProductsVisitor : ShipmentVisitor
         {
             shipmentItem.Accept(this);
         }
+        _level--;
     }
     
     public override void Visit(ProductWithSerialNumber product)

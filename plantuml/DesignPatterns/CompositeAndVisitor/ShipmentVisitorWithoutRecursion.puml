@@ -1,0 +1,23 @@
+@startuml
+class VisitorWithoutRecursionClient {
+    + {static} Main() : void
+}
+abstract class ShipmentVisitorWithoutRecursion {
+    + {abstract} Visit(product:ProductWithSerialNumber) : void
+    + {abstract} Visit(product:ProductWithoutSerialNumber) : void
+    + {abstract} Visit(box:Box) : void
+    + {abstract} Visit(pallet:Pallet) : void
+    + {abstract} Visit(shipment:Shipment) : void
+    + {abstract} Visit(shipment:ShipmentItemGroup) : void
+}
+class CountProductsVisitorWithoutRecursion {
+    + Count : int <<get>>
+    + <<override>> Visit(product:ProductWithSerialNumber) : void
+    + <<override>> Visit(product:ProductWithoutSerialNumber) : void
+    + <<override>> Visit(box:Box) : void
+    + <<override>> Visit(pallet:Pallet) : void
+    + <<override>> Visit(shipment:Shipment) : void
+    + <<override>> Visit(shipment:ShipmentItemGroup) : void
+}
+ShipmentVisitorWithoutRecursion <|-- CountProductsVisitorWithoutRecursion
+@enduml

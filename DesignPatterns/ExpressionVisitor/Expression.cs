@@ -7,13 +7,14 @@ public class ClientExpression
 {
     public static void Main()
     {
-        var expression = new AdditionExpression(
-            new IntExpression(1),
+        var expression =
             new AdditionExpression(
-                new IntExpression(2),
-                new IntExpression(3)
-            )
-        );
+                new IntExpression(4), 
+                new MultiplyExpression(
+                        new IntExpression(2),
+                        new IntExpression(3)
+                        )
+                );
 
         
         var visitor = new ExpressionPrinter();
@@ -29,9 +30,14 @@ public class ClientExpression
         // Console.WriteLine(visitor.ToString());
         
         var evalVisitor = new EvalExpressionVisitor();
-        Console.WriteLine(expression.Accept(evalVisitor));
-        
+        int result = expression.Accept(evalVisitor);
+        Console.WriteLine(result);
 
+        ExpressionEvaluator expressionEvaluator = new ();
+        expression.Accept(expressionEvaluator);
+        Console.WriteLine(expressionEvaluator.Value);
+        
+        
 
         // Expression<Func<int,int>> addOneDivideByTwo = v => v + 1;
         // CountBinaryNodes countBinaryNodes = new ();
@@ -44,7 +50,8 @@ public class CountBinaryNodes : System.Linq.Expressions.ExpressionVisitor
     public int Count { get; private set; }
     
     
-    protected override System.Linq.Expressions.Expression VisitBinary(BinaryExpression node)
+    protected override System.Linq.Expressions.Expression 
+        VisitBinary(BinaryExpression node)
     {
         var nodeType = node.NodeType;
         Console.WriteLine(nodeType);
@@ -57,13 +64,15 @@ public class CountBinaryNodes : System.Linq.Expressions.ExpressionVisitor
 public interface IExpressionVisitor
 {
     void Visit(IntExpression intExpression);
-    void Visit(AdditionExpression ae);
+    void Visit(MultiplyExpression multiplyExpression);
+    void Visit(AdditionExpression additionExpression);
 }
 
 public interface IEvalExpressionVisitor
 {
     int Visit(IntExpression intExpression);
-    int Visit(AdditionExpression ae);
+    int Visit(MultiplyExpression multiplyExpression);
+    int Visit(AdditionExpression additionExpression);
 }
 
 public class EvalExpressionVisitor : IEvalExpressionVisitor
@@ -73,9 +82,36 @@ public class EvalExpressionVisitor : IEvalExpressionVisitor
         return intExpression.ValueInt;
     }
 
-    public int Visit(AdditionExpression ae)
+    public int Visit(MultiplyExpression multiplyExpression)
     {
-        return ae.Left.Accept(this) + ae.Right.Accept(this);
+        return multiplyExpression.Left.Accept(this) * multiplyExpression.Right.Accept(this);
+    }
+
+    public int Visit(AdditionExpression additionExpression)
+    {
+        return additionExpression.Left.Accept(this) + additionExpression.Right.Accept(this);
+    }
+}
+
+public class ExpressionEvaluator : IExpressionVisitor
+{
+    public int Value { get; private set; } = 0;
+    
+    public void Visit(IntExpression intExpression)
+    {
+        Value = intExpression.ValueInt;
+    }
+
+    public void Visit(MultiplyExpression multiplyExpression)
+    {
+        Value = multiplyExpression.Left.Accept(new EvalExpressionVisitor()) * 
+                 multiplyExpression.Right.Accept(new EvalExpressionVisitor());
+    }
+
+    public void Visit(AdditionExpression additionExpression)
+    {
+        Value = additionExpression.Left.Accept(new EvalExpressionVisitor()) + 
+                 additionExpression.Right.Accept(new EvalExpressionVisitor());
     }
 }
 
@@ -88,12 +124,21 @@ public class ExpressionPrinter : IExpressionVisitor
         _sb.Append(intExpression.ValueInt);
     }
 
-    public void Visit(AdditionExpression ae)
+    public void Visit(MultiplyExpression multiplyExpression)
     {
         _sb.Append("(");
-        ae.Left.Accept(this);
+        multiplyExpression.Left.Accept(this);
+        _sb.Append("*");
+        multiplyExpression.Right.Accept(this);
+        _sb.Append(")");
+    }
+
+    public void Visit(AdditionExpression additionExpression)
+    {
+        _sb.Append("(");
+        additionExpression.Left.Accept(this);
         _sb.Append("+");
-        ae.Right.Accept(this);
+        additionExpression.Right.Accept(this);
         _sb.Append(")");
     }
 
@@ -108,6 +153,8 @@ public abstract class Expression
     public abstract void Accept(IExpressionVisitor visitor);
     
     public abstract int Accept(IEvalExpressionVisitor visitor);
+    
+    public abstract void AcceptClassic(IExpressionVisitor visitor);
 }
 
 public class IntExpression : Expression
@@ -128,14 +175,19 @@ public class IntExpression : Expression
     {
         return visitor.Visit(this);
     }
+
+    public override void AcceptClassic(IExpressionVisitor visitor)
+    {
+        visitor.Visit(this);
+    }
 }
 
-public class AdditionExpression : Expression
+public class MultiplyExpression : Expression
 {
     public Expression Left { get; set; }
     public Expression Right { get; set; }
 
-    public AdditionExpression(Expression left, Expression right)
+    public MultiplyExpression(Expression left, Expression right)
     {
         Left = left;
         Right = right;
@@ -145,10 +197,38 @@ public class AdditionExpression : Expression
     {
         visitor.Visit(this);
     }
+    
+    public override void AcceptClassic(IExpressionVisitor visitor)
+    {
+        Left.AcceptClassic(visitor);
+        visitor.Visit(this);
+        Right.AcceptClassic(visitor);
+    }
 
     public override int Accept(IEvalExpressionVisitor visitor)
     {
         return visitor.Visit(this);
+    }
+}
+
+public class AdditionExpression(Expression left, Expression right) : Expression
+{
+    public Expression Left { get; set; } = left;
+    public Expression Right { get; set; } = right;
+
+    public override void Accept(IExpressionVisitor visitor)
+    {
+        visitor.Visit(this);
+    }
+
+    public override int Accept(IEvalExpressionVisitor visitor)
+    {
+        return visitor.Visit(this);
+    }
+
+    public override void AcceptClassic(IExpressionVisitor visitor)
+    {
+        throw new NotImplementedException();
     }
 }
 

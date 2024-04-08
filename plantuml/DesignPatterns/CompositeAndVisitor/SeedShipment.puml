@@ -1,5 +1,6 @@
 @startuml
 class SeedShipment {
     + {static} CreateDummyShipment() : Shipment
+    + {static} CreateShipmentWithoutPallets() : Shipment
 }
 @enduml

@@ -1,0 +1,54 @@
+@startuml
+class LiskovSubstitutionAfter {
+    + {static} Main() : void
+}
+class Order {
+    + Status : string <<get>> <<set>> = "Open"
+    + AddOrderLine(itemQuantityPrice:ItemQuantityPrice) : void
+    + TotalPrice() : decimal
+}
+abstract class PaymentProcessor {
+    + {abstract} Pay(order:Order) : void
+}
+class DebitPaymentProcessor {
+    - _securityCode : string
+    + DebitPaymentProcessor(securityCode:string)
+    + <<override>> Pay(order:Order) : void
+}
+class CreditPaymentProcessor {
+    - _securityCode : string
+    + CreditPaymentProcessor(securityCode:string)
+    + <<override>> Pay(order:Order) : void
+}
+class PaypalPaymentProcessor {
+    - _email : string
+    + PaypalPaymentProcessor(email:string)
+    + <<override>> Pay(order:Order) : void
+}
+class AfterpayPaymentProcessor {
+    - <<readonly>> _email : string
+    - <<readonly>> _age : int
+    + AfterpayPaymentProcessor(email:string, age:int)
+    + <<override>> Pay(order:Order) : void
+    - VerifyAge(age:int) : bool
+}
+class ItemQuantityPrice <<record>> {
+    + Product : string <<get>> <<init>>
+    + Quantity : decimal <<get>> <<init>>
+    + UnitPrice : decimal <<get>> <<init>>
+}
+class "List`1"<T> {
+}
+LiskovSubstitutionAfter +-- Order
+Order o-> "_orderlines<ItemQuantityPrice>" "List`1"
+LiskovSubstitutionAfter +-- PaymentProcessor
+LiskovSubstitutionAfter +-- DebitPaymentProcessor
+PaymentProcessor <|-- DebitPaymentProcessor
+LiskovSubstitutionAfter +-- CreditPaymentProcessor
+PaymentProcessor <|-- CreditPaymentProcessor
+LiskovSubstitutionAfter +-- PaypalPaymentProcessor
+PaymentProcessor <|-- PaypalPaymentProcessor
+LiskovSubstitutionAfter +-- AfterpayPaymentProcessor
+PaymentProcessor <|-- AfterpayPaymentProcessor
+Order +-- ItemQuantityPrice
+@enduml

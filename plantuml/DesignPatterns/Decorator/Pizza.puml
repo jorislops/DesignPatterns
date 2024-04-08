@@ -1,0 +1,38 @@
+@startuml
+class PizzaClient {
+    + {static} Main() : void
+}
+interface IPizza {
+    + GetDescription() : string
+    + GetPrice() : decimal
+}
+class PizzaBase {
+    + GetDescription() : string
+    + GetPrice() : decimal
+}
+abstract class PizzaToppingDecorator {
+    + {abstract} GetDescription() : string
+    + {abstract} GetPrice() : decimal
+}
+class CheeseToppingDecorator {
+    + CheeseToppingDecorator(pizza:IPizza)
+    + <<override>> GetDescription() : string
+    + <<override>> GetPrice() : decimal
+}
+class HamToppingDecorator {
+    + HamToppingDecorator(pizza:IPizza)
+    + <<override>> GetDescription() : string
+    + <<override>> GetPrice() : decimal
+}
+class PineappleToppingDecorator {
+    + PineappleToppingDecorator(pizza:IPizza)
+    + <<override>> GetDescription() : string
+    + <<override>> GetPrice() : decimal
+}
+IPizza <|-- PizzaBase
+IPizza <|-- PizzaToppingDecorator
+PizzaToppingDecorator o-> "Pizza" IPizza
+PizzaToppingDecorator <|-- CheeseToppingDecorator
+PizzaToppingDecorator <|-- HamToppingDecorator
+PizzaToppingDecorator <|-- PineappleToppingDecorator
+@enduml

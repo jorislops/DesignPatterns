@@ -1,0 +1,61 @@
+@startuml
+class InterfaceSegregationAfter {
+    + {static} Main() : void
+}
+class Order {
+    + Status : string <<get>> <<set>> = "Open"
+    + AddOrderLine(itemQuantityPrice:ItemQuantityPrice) : void
+    + TotalPrice() : decimal
+}
+interface IPaymentProcessor {
+    Pay(order:Order) : void
+}
+interface IAuthorizeBySms {
+    AuthorizeBySms(order:Order, code:string) : void
+}
+class DebitPaymentProcessor {
+    - _securityCode : string
+    + DebitPaymentProcessor(securityCode:string)
+    + Pay(order:Order) : void
+}
+class CreditPaymentProcessor {
+    - _securityCode : string
+    + CreditPaymentProcessor(securityCode:string)
+    + Pay(order:Order) : void
+}
+class PaypalPaymentProcessor {
+    - _email : string
+    + _verified : bool = false
+    + PaypalPaymentProcessor(email:string)
+    + Pay(order:Order) : void
+    + AuthorizeBySms(order:Order, code:string) : void
+}
+class AfterpayPaymentProcessor {
+    - <<readonly>> _email : string
+    - <<readonly>> _age : int
+    + AfterpayPaymentProcessor(email:string, age:int)
+    + Pay(order:Order) : void
+    - VerifyAge(age:int) : bool
+}
+class ItemQuantityPrice <<record>> {
+    + Product : string <<get>> <<init>>
+    + Quantity : decimal <<get>> <<init>>
+    + UnitPrice : decimal <<get>> <<init>>
+}
+class "List`1"<T> {
+}
+InterfaceSegregationAfter +-- Order
+Order o-> "_orderlines<ItemQuantityPrice>" "List`1"
+InterfaceSegregationAfter +-- IPaymentProcessor
+InterfaceSegregationAfter +-- IAuthorizeBySms
+InterfaceSegregationAfter +-- DebitPaymentProcessor
+IPaymentProcessor <|-- DebitPaymentProcessor
+InterfaceSegregationAfter +-- CreditPaymentProcessor
+IPaymentProcessor <|-- CreditPaymentProcessor
+InterfaceSegregationAfter +-- PaypalPaymentProcessor
+IPaymentProcessor <|-- PaypalPaymentProcessor
+IAuthorizeBySms <|-- PaypalPaymentProcessor
+InterfaceSegregationAfter +-- AfterpayPaymentProcessor
+IPaymentProcessor <|-- AfterpayPaymentProcessor
+Order +-- ItemQuantityPrice
+@enduml

@@ -1,0 +1,34 @@
+@startuml
+class VisitorClient {
+    + {static} Main() : void
+}
+abstract class ShipmentVisitor {
+    + {abstract} Visit(product:ProductWithSerialNumber) : void
+    + {abstract} Visit(product:ProductWithoutSerialNumber) : void
+    + {abstract} Visit(box:Box) : void
+    + {abstract} Visit(pallet:Pallet) : void
+    + {abstract} Visit(shipment:Shipment) : void
+    + {abstract} Visit(shipment:ShipmentItemGroup) : void
+}
+class CountProductsVisitor {
+    + Count : int <<get>>
+    + <<override>> Visit(product:ProductWithSerialNumber) : void
+    + <<override>> Visit(product:ProductWithoutSerialNumber) : void
+    + <<override>> Visit(box:Box) : void
+    + <<override>> Visit(pallet:Pallet) : void
+    + <<override>> Visit(shipment:Shipment) : void
+    + <<override>> Visit(shipment:ShipmentItemGroup) : void
+}
+class DisplayProductsVisitor {
+    - _level : int
+    + <<override>> Visit(shipment:ShipmentItemGroup) : void
+    + <<override>> Visit(product:ProductWithSerialNumber) : void
+    + <<override>> Visit(product:ProductWithoutSerialNumber) : void
+    + <<override>> Visit(box:Box) : void
+    + <<override>> Visit(pallet:Pallet) : void
+    + <<override>> Visit(shipment:Shipment) : void
+    - GetIndent() : string
+}
+ShipmentVisitor <|-- CountProductsVisitor
+ShipmentVisitor <|-- DisplayProductsVisitor
+@enduml

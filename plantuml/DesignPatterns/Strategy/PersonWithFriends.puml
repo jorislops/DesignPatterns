@@ -1,0 +1,8 @@
+@startuml
+class PersonWithFriends {
+    + {static} Main() : void
+    + PrintStrategy(formatter:Func<Person, string>) : string
+}
+class "List`1"<T> {
+}
+@enduml

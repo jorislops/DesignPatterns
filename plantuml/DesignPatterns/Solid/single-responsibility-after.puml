@@ -1,0 +1,25 @@
+@startuml
+class SingleResponsibilityAfter {
+    + {static} Main() : void
+}
+class Order {
+    + Status : string <<get>> <<set>> = "Open"
+    + AddOrderLine(itemQuantityPrice:ItemQuantityPrice) : void
+    + TotalPrice() : decimal
+}
+class PaymentProcessor {
+    + PayDebit(order:Order, securityCode:string) : void
+    + PayCredit(order:Order, securityCode:string) : void
+}
+class ItemQuantityPrice <<record>> {
+    + Product : string <<get>> <<init>>
+    + Quantity : decimal <<get>> <<init>>
+    + UnitPrice : decimal <<get>> <<init>>
+}
+class "List`1"<T> {
+}
+SingleResponsibilityAfter +-- Order
+Order o-> "_orderlines<ItemQuantityPrice>" "List`1"
+SingleResponsibilityAfter +-- PaymentProcessor
+Order +-- ItemQuantityPrice
+@enduml

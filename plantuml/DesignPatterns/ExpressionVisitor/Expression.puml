@@ -1,0 +1,70 @@
+@startuml
+class ClientExpression {
+    + {static} Main() : void
+}
+class CountBinaryNodes {
+    + Count : int <<get>>
+    # <<override>> VisitBinary(node:BinaryExpression) : System.Linq.Expressions.Expression
+}
+interface IExpressionVisitor {
+    Visit(intExpression:IntExpression) : void
+    Visit(multiplyExpression:MultiplyExpression) : void
+    Visit(additionExpression:AdditionExpression) : void
+}
+interface IEvalExpressionVisitor {
+    Visit(intExpression:IntExpression) : int
+    Visit(multiplyExpression:MultiplyExpression) : int
+    Visit(additionExpression:AdditionExpression) : int
+}
+class EvalExpressionVisitor {
+    + Visit(intExpression:IntExpression) : int
+    + Visit(multiplyExpression:MultiplyExpression) : int
+    + Visit(additionExpression:AdditionExpression) : int
+}
+class ExpressionEvaluator {
+    + Value : int <<get>> = 0
+    + Visit(intExpression:IntExpression) : void
+    + Visit(multiplyExpression:MultiplyExpression) : void
+    + Visit(additionExpression:AdditionExpression) : void
+}
+class ExpressionPrinter {
+    + Visit(intExpression:IntExpression) : void
+    + Visit(multiplyExpression:MultiplyExpression) : void
+    + Visit(additionExpression:AdditionExpression) : void
+    + <<override>> ToString() : string
+}
+abstract class Expression {
+    + {abstract} Accept(visitor:IExpressionVisitor) : void
+    + {abstract} Accept(visitor:IEvalExpressionVisitor) : int
+    + {abstract} AcceptClassic(visitor:IExpressionVisitor) : void
+}
+class IntExpression {
+    + ValueInt : int <<get>> <<set>>
+    + IntExpression(value:int)
+    + <<override>> Accept(visitor:IExpressionVisitor) : void
+    + <<override>> Accept(visitor:IEvalExpressionVisitor) : int
+    + <<override>> AcceptClassic(visitor:IExpressionVisitor) : void
+}
+class MultiplyExpression {
+    + MultiplyExpression(left:Expression, right:Expression)
+    + <<override>> Accept(visitor:IExpressionVisitor) : void
+    + <<override>> AcceptClassic(visitor:IExpressionVisitor) : void
+    + <<override>> Accept(visitor:IEvalExpressionVisitor) : int
+}
+class AdditionExpression {
+    + <<override>> Accept(visitor:IExpressionVisitor) : void
+    + <<override>> Accept(visitor:IEvalExpressionVisitor) : int
+    + <<override>> AcceptClassic(visitor:IExpressionVisitor) : void
+}
+IEvalExpressionVisitor <|-- EvalExpressionVisitor
+IExpressionVisitor <|-- ExpressionEvaluator
+IExpressionVisitor <|-- ExpressionPrinter
+ExpressionPrinter o-> "_sb" StringBuilder
+Expression <|-- IntExpression
+Expression <|-- MultiplyExpression
+MultiplyExpression --> "Left" Expression
+MultiplyExpression --> "Right" Expression
+Expression <|-- AdditionExpression
+AdditionExpression o-> "Left" Expression
+AdditionExpression o-> "Right" Expression
+@enduml

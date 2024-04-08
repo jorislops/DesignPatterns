@@ -1,0 +1,7 @@
+@startuml
+class NetworkExample {
+    + {static} Main() : void
+    + {static} SendMessage(message:string) : void
+    + {static} RunServer() : void
+}
+@enduml

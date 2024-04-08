@@ -1,0 +1,66 @@
+@startuml
+class DependencyInversionPrinciple {
+    + {static} Main() : void
+}
+interface ISmsAuthorizationPaymentProcessor {
+    AuthorizeBySms(code:string) : void
+    Authorize : bool <<get>>
+}
+class SmsAuthorizationPaymentProcessor {
+    + Authorize : bool <<get>> = false
+    + AuthorizeBySms(code:string) : void
+}
+class Order {
+    + Status : string <<get>> <<set>> = "Open"
+    + AddOrderLine(itemQuantityPrice:ItemQuantityPrice) : void
+    + TotalPrice() : decimal
+}
+interface IPaymentProcessor {
+    Pay(order:Order) : void
+}
+class DebitPaymentProcessor {
+    - _securityCode : string
+    + DebitPaymentProcessor(securityCode:string)
+    + Pay(order:Order) : void
+}
+class CreditPaymentProcessor {
+    - _securityCode : string
+    + CreditPaymentProcessor(securityCode:string)
+    + Pay(order:Order) : void
+}
+class PaypalPaymentProcessor {
+    - _email : string
+    + PaypalPaymentProcessor(email:string, smsAuthorizationPaymentProcessor:ISmsAuthorizationPaymentProcessor)
+    + Pay(order:Order) : void
+}
+class AfterpayPaymentProcessor {
+    - <<readonly>> _email : string
+    - <<readonly>> _age : int
+    + AfterpayPaymentProcessor(email:string, age:int)
+    + Pay(order:Order) : void
+    - VerifyAge(age:int) : bool
+}
+class ItemQuantityPrice <<record>> {
+    + Product : string <<get>> <<init>>
+    + Quantity : decimal <<get>> <<init>>
+    + UnitPrice : decimal <<get>> <<init>>
+}
+class "List`1"<T> {
+}
+DependencyInversionPrinciple +-- ISmsAuthorizationPaymentProcessor
+DependencyInversionPrinciple +-- SmsAuthorizationPaymentProcessor
+ISmsAuthorizationPaymentProcessor <|-- SmsAuthorizationPaymentProcessor
+DependencyInversionPrinciple +-- Order
+Order o-> "_orderlines<ItemQuantityPrice>" "List`1"
+DependencyInversionPrinciple +-- IPaymentProcessor
+DependencyInversionPrinciple +-- DebitPaymentProcessor
+IPaymentProcessor <|-- DebitPaymentProcessor
+DependencyInversionPrinciple +-- CreditPaymentProcessor
+IPaymentProcessor <|-- CreditPaymentProcessor
+DependencyInversionPrinciple +-- PaypalPaymentProcessor
+IPaymentProcessor <|-- PaypalPaymentProcessor
+PaypalPaymentProcessor --> "_paymentProcessor" ISmsAuthorizationPaymentProcessor
+DependencyInversionPrinciple +-- AfterpayPaymentProcessor
+IPaymentProcessor <|-- AfterpayPaymentProcessor
+Order +-- ItemQuantityPrice
+@enduml

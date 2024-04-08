@@ -1,0 +1,41 @@
+@startuml
+class TextEditor {
+    + {static} Main() : void
+}
+interface TextToString {
+    + GetToString() : string
+}
+class Plaintext {
+    - _text : string
+    + Plaintext(text:string)
+    + GetToString() : string
+}
+abstract class TextDecorator {
+    + TextDecorator(textToString:TextToString)
+    + {abstract} GetToString() : string
+}
+class BoldTextDecorator {
+    + BoldTextDecorator(textToString:TextToString)
+    + <<override>> GetToString() : string
+}
+class ItalicTextDecorator {
+    + ItalicTextDecorator(textToString:TextToString)
+    + <<override>> GetToString() : string
+}
+class H1TextDecorator {
+    + H1TextDecorator(textToString:TextToString)
+    + <<override>> GetToString() : string
+}
+TextEditor +-- TextToString
+TextEditor +-- Plaintext
+TextToString <|-- Plaintext
+TextEditor +-- TextDecorator
+TextToString <|-- TextDecorator
+TextDecorator --> "_textToString" TextToString
+TextEditor +-- BoldTextDecorator
+TextDecorator <|-- BoldTextDecorator
+TextEditor +-- ItalicTextDecorator
+TextDecorator <|-- ItalicTextDecorator
+TextEditor +-- H1TextDecorator
+TextDecorator <|-- H1TextDecorator
+@enduml
