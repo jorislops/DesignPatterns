@@ -2,6 +2,8 @@ using static System.Console;
 
 namespace DesignPatterns.Solid;
 
+//Example based on
+//https://www.youtube.com/watch?v=pTB30aXS77U
 
 public class SingleResponsibilityBefore
 {
